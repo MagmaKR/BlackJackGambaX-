@@ -1,12 +1,12 @@
 {
-  "Author": "your name here",
-  "Name": "Sample Plugin",
-  "Punchline": "A short one-liner that shows up in /xlplugins.",
-  "Description": "A description that shows up in /xlplugins. List any major slash-command(s).",
+  "Author": "MagmaK",
+  "Name": "Gamba BlackJack X",
+  "Punchline": "A BlackJack manager for party only.",
+  "Description": "A blackjack managmer that is user friendly disabling the need for macros and calculatings",
   "ApplicableVersion": "any",
   "Tags": [
-    "sample",
-    "plugin",
-    "goats"
+    
+    "plugin"
+   
   ]
 }
