@@ -74,3 +74,4 @@ Note that you only need to add it to the Dev Plugin Locations once (Step 1); it 
 Basically, just replace all references to `SamplePlugin` in all of the files and filenames with your desired name, then start building the plugin of your dreams. You'll figure it out 😁
 
 Dalamud will load the JSON file (by default, `SamplePlugin/SamplePlugin.json`) next to your DLL and use it for metadata, including the description for your plugin in the Plugin Installer. Make sure to update this with information relevant to _your_ plugin!
+"# GambaBlackJackX" 
