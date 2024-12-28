@@ -1,10 +1,14 @@
-﻿using Dalamud.Game.Command;
+using Dalamud.Game.Command;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using System.IO;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using SamplePlugin.Windows;
+using ECommons;
+using System.Reflection;
+using ECommons.Automation;
+using System.Runtime.CompilerServices;
 
 namespace SamplePlugin;
 
@@ -13,9 +17,7 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] internal static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
     [PluginService] internal static ITextureProvider TextureProvider { get; private set; } = null!;
     [PluginService] internal static ICommandManager CommandManager { get; private set; } = null!;
-    [PluginService] internal static IClientState ClientState { get; private set; } = null!;
-    [PluginService] internal static IDataManager DataManager { get; private set; } = null!;
-    [PluginService] internal static IPluginLog Log { get; private set; } = null!;
+    [PluginService] public static IClientState clientState { get; private set; } = null!;
 
     private const string CommandName = "/pmycommand";
 
@@ -24,6 +26,17 @@ public sealed class Plugin : IDalamudPlugin
     public readonly WindowSystem WindowSystem = new("SamplePlugin");
     private ConfigWindow ConfigWindow { get; init; }
     private MainWindow MainWindow { get; init; }
+    private TestingWindow testingWindow { get; init; }
+
+    public Chat Chat { get; }
+    public PlayerNameUI PlayerNameUI { get; }
+    public BetFormating BetManager { get; private set; }
+    public static string dealerName { get; set; }
+    public MainWindow MainWindow2 { get; init; }
+
+
+
+
 
     public Plugin()
     {
@@ -32,11 +45,15 @@ public sealed class Plugin : IDalamudPlugin
         // you might normally want to embed resources and load them from the manifest stream
         var goatImagePath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "goat.png");
 
+
         ConfigWindow = new ConfigWindow(this);
-        MainWindow = new MainWindow(this, goatImagePath);
+        MainWindow = new MainWindow(this);
+        testingWindow = new TestingWindow(this);
+
 
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
+        WindowSystem.AddWindow(testingWindow);
 
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
@@ -51,11 +68,15 @@ public sealed class Plugin : IDalamudPlugin
 
         // Adds another button that is doing the same but for the main ui of the plugin
         PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
+        ECommonsMain.Init(PluginInterface, this);
+        ECommonsMain.Init(PluginInterface, this, ECommons.Module.All);
+        Chat = new Chat();
+      
+        BetManager = new BetFormating();
+        MainWindow2 = new MainWindow(this);
+        PlayerNameUI = new PlayerNameUI();
 
-        // Add a simple message to the log with level set to information
-        // Use /xllog to open the log window in-game
-        // Example Output: 00:57:54.959 | INF | [SamplePlugin] ===A cool log message from Sample Plugin===
-        Log.Information($"===A cool log message from {PluginInterface.Manifest.Name}===");
+
     }
 
     public void Dispose()
@@ -64,8 +85,10 @@ public sealed class Plugin : IDalamudPlugin
 
         ConfigWindow.Dispose();
         MainWindow.Dispose();
+        testingWindow.Dispose();
 
         CommandManager.RemoveHandler(CommandName);
+
     }
 
     private void OnCommand(string command, string args)
@@ -78,4 +101,5 @@ public sealed class Plugin : IDalamudPlugin
 
     public void ToggleConfigUI() => ConfigWindow.Toggle();
     public void ToggleMainUI() => MainWindow.Toggle();
+    public void ToggleTestWindowUI() => testingWindow.Toggle();
 }
