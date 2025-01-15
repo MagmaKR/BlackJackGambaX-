@@ -24,15 +24,16 @@ public sealed class Plugin : IDalamudPlugin
     public Configuration Configuration { get; init; }
 
     public readonly WindowSystem WindowSystem = new("SamplePlugin");
-    private ConfigWindow ConfigWindow { get; init; }
-    private MainWindow MainWindow { get; init; }
-    private TestingWindow testingWindow { get; init; }
+    public ConfigWindow ConfigWindow { get; init; }
+    public MainWindow MainWindow { get; init; }
+   
 
     public Chat Chat { get; }
     public PlayerNameUI PlayerNameUI { get; }
     public BetFormating BetManager { get; private set; }
-    public static string dealerName { get; set; }
+    public string DealerName;
     public MainWindow MainWindow2 { get; init; }
+   
 
 
 
@@ -48,12 +49,13 @@ public sealed class Plugin : IDalamudPlugin
 
         ConfigWindow = new ConfigWindow(this);
         MainWindow = new MainWindow(this);
-        testingWindow = new TestingWindow(this);
+        
+       
 
 
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
-        WindowSystem.AddWindow(testingWindow);
+     
 
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
@@ -75,6 +77,8 @@ public sealed class Plugin : IDalamudPlugin
         BetManager = new BetFormating();
         MainWindow2 = new MainWindow(this);
         PlayerNameUI = new PlayerNameUI();
+       
+
 
 
     }
@@ -85,7 +89,7 @@ public sealed class Plugin : IDalamudPlugin
 
         ConfigWindow.Dispose();
         MainWindow.Dispose();
-        testingWindow.Dispose();
+       
 
         CommandManager.RemoveHandler(CommandName);
 
@@ -101,5 +105,5 @@ public sealed class Plugin : IDalamudPlugin
 
     public void ToggleConfigUI() => ConfigWindow.Toggle();
     public void ToggleMainUI() => MainWindow.Toggle();
-    public void ToggleTestWindowUI() => testingWindow.Toggle();
+  
 }
