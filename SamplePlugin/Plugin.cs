@@ -29,7 +29,7 @@ public sealed class Plugin : IDalamudPlugin
    
 
     public Chat Chat { get; }
-    public PlayerNameUI PlayerNameUI { get; }
+    
     public BetFormating BetManager { get; private set; }
     public string DealerName;
     public MainWindow MainWindow2 { get; init; }
@@ -76,7 +76,7 @@ public sealed class Plugin : IDalamudPlugin
       
         BetManager = new BetFormating();
         MainWindow2 = new MainWindow(this);
-        PlayerNameUI = new PlayerNameUI();
+       
        
 
 
