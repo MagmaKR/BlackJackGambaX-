@@ -17,6 +17,8 @@ public class PlayerState
     public List<int> SecondHand { get; set; } = new List<int>();
     public bool HasSplitAces { get; set; }
     public bool HasUsedFirstHit { get; set; }
+    public bool IsInitialized { get; set; }
+    public bool HasValidBet { get; set; }
 
     public PlayerState()
     {
@@ -38,5 +40,7 @@ public class PlayerState
         SecondHand = new List<int>();
         HasSplitAces = false;
         HasUsedFirstHit = false;
+        IsInitialized = true;
+        HasValidBet = false;
     }
 } 

@@ -1,15 +1,22 @@
 using System.Numerics;
 using Dalamud.Interface.Colors;
 using ImGuiNET;
+using SamplePlugin.Windows;
 
 namespace SamplePlugin.Game;
 
 public class WinnerDisplay
 {
+    private Plugin Plugin;
     private bool showWindow;
     private string winnerName = string.Empty;
     private float windowTimer;
     private const float WINDOW_DURATION = 4.0f;
+
+    public WinnerDisplay(Plugin plugin)
+    {
+        this.Plugin = plugin;
+    }
 
     public void ShowWinner(string winner)
     {
@@ -18,6 +25,8 @@ public class WinnerDisplay
         windowTimer = 0f;
     }
 
+   
+
     public void Draw()
     {
         if (!showWindow) return;
@@ -25,9 +34,9 @@ public class WinnerDisplay
         var viewport = ImGui.GetMainViewport();
         var center = viewport.GetCenter();
         ImGui.SetNextWindowPos(center, ImGuiCond.Always, new Vector2(0.5f, 0.5f));
-        
-        ImGuiWindowFlags flags = ImGuiWindowFlags.NoMove | 
-                                ImGuiWindowFlags.NoResize | 
+
+        ImGuiWindowFlags flags = ImGuiWindowFlags.NoMove |
+                                ImGuiWindowFlags.NoResize |
                                 ImGuiWindowFlags.AlwaysAutoResize |
                                 ImGuiWindowFlags.NoCollapse;
 
@@ -48,4 +57,4 @@ public class WinnerDisplay
         }
         ImGui.End();
     }
-} 
+}
