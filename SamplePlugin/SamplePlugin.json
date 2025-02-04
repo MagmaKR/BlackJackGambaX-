@@ -18,7 +18,9 @@
   "Punchline": "A BlackJack manager for party only.",
   "AcceptsFeedback": true,
 
-  "DownloadLinkInstall": "https://github.com/MagmaKR/BlackJackGambaX-/releases/download/v0.0.0.2/latest.zip"
- 
+  "DownloadLinkInstall": "https://github.com/MagmaKR/BlackJackGambaX-/releases/download/v0.0.0.2/latest.zip",
+  "IconUrl" : "https://raw.githubusercontent.com/MagmaKR/BlackJackGambaX-/main/Images/BerryDino-removebg-preview.png"
+
+  
 }
 ]
