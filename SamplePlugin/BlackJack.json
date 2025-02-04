@@ -1,0 +1,22 @@
+{
+  "Author": "MagmaK",
+  "Name": "Gamba BlackJack X",
+  "InternalName": "SamplePlugin",
+  "AssemblyVersion": "0.0.0.1",
+  "Description": "A blackjack managmer that is user friendly disabling the need for macros and calculatings",
+  "ApplicableVersion": "any",
+  "Tags": [
+    "Blackjack",
+    "plugin"
+  ],
+  "DalamudApiLevel": 11,
+  "LoadRequiredState": 0,
+  "LoadSync": false,
+  "CanUnloadAsync": false,
+  "LoadPriority": 0,
+  "Punchline": "A BlackJack manager for party only.",
+  "AcceptsFeedback": true,
+  "DownloadLinkInstall": "https://github.com/MagmaKR/BlackJackGambaX-/releases/download/v0.0.0.2/GambaBlackJack.zip"
+  
+ 
+}
