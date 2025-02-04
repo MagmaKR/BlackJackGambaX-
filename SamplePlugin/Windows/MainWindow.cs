@@ -138,6 +138,7 @@ public class MainWindow : Window, IDisposable
         string prefix = winnings < 0 ? "-" : "";
         double absWinnings = Math.Abs(winnings);
         
+        //============================================///
         if (absWinnings >= 1_000_000)
             return $"{prefix}{absWinnings / 1_000_000:F1}M";
         else if (absWinnings >= 1_000)
