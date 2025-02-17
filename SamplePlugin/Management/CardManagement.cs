@@ -15,11 +15,52 @@ public partial class CardManagement
     public int GetTotal(List<int> cardValues)
     {
         int total = 0;
+        int aceCount = 0;
+
+        // First count aces and non-aces separately
         foreach (var value in cardValues)
         {
-            total += value;
+            if (value == 1) // Ace
+            {
+                aceCount++;
+            }
+            else
+            {
+                total += value;
+            }
         }
+
+        // Add aces, counting them as 11 when possible
+        for (int i = 0; i < aceCount; i++)
+        {
+            if (total + 11 <= 21)
+            {
+                total += 11;
+            }
+            else
+            {
+                total += 1;
+            }
+        }
+
         return total;
+    }
+
+    public string GetHandDescription(List<int> cardValues)
+    {
+        var cards = new List<string>();
+        foreach (var value in cardValues)
+        {
+            if (value == 1)
+            {
+                cards.Add("A");
+            }
+            else
+            {
+                cards.Add(value.ToString());
+            }
+        }
+        return string.Join(", ", cards);
     }
 
     public void ClearPlayerData()

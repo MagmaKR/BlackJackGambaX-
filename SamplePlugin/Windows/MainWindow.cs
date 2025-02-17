@@ -106,7 +106,7 @@ public class MainWindow : Window, IDisposable
                 continue;
 
             string playerName = member.Name.TextValue;
-            
+
             try
             {
                 // Initialize player state if needed
@@ -137,7 +137,7 @@ public class MainWindow : Window, IDisposable
     {
         string prefix = winnings < 0 ? "-" : "";
         double absWinnings = Math.Abs(winnings);
-        
+
         //============================================///
         if (absWinnings >= 1_000_000)
             return $"{prefix}{absWinnings / 1_000_000:F1}M";
@@ -205,10 +205,11 @@ public class MainWindow : Window, IDisposable
             ImGui.SameLine();
 
             DrawBetButton(playerName, formatBet);
-            
-            // Display Player's Cards
+
+            // Display Player's Cards with new format
             var cardValues = playerState.CardValues;
-            ImGui.Text($"{playerName} Cards: {string.Join(", ", cardValues)} Total: {card.GetTotal(cardValues)}");
+            string handDescription = card.GetHandDescription(cardValues);
+            ImGui.Text($"{playerName} Cards: {handDescription} Total: {card.GetTotal(cardValues)}");
 
             // Game Buttons
             DrawGameButtons(playerName, playerState, card);
@@ -222,7 +223,7 @@ public class MainWindow : Window, IDisposable
     private void DrawBetButton(string playerName, string formatBet)
     {
         Vector4 defaultButtonColor = new Vector4(0.3f, 0.5f, 0.9f, 1.0f);
-        
+
         ImGui.PushStyleColor(ImGuiCol.Button, defaultButtonColor);
         ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(0.4f, 0.6f, 1.0f, 1.0f));
         ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0.2f, 0.4f, 0.8f, 1.0f));
@@ -230,11 +231,11 @@ public class MainWindow : Window, IDisposable
         if (ImGui.Button("Bet", new Vector2(60, 30)))
         {
             Plugin.Chat.SendMessage($"/p {playerName} bet amount is {formatBet}");
-             Plugin.Chat.SendMessage($"/p --------------------------------------");
+            Plugin.Chat.SendMessage($"/p --------------------------------------");
             if (!string.IsNullOrEmpty(Plugin.Configuration.BetEmote))
                 Plugin.Chat.SendMessage($"/p {Plugin.Configuration.BetEmote}");
-            
-               
+
+
         }
 
         ImGui.PopStyleColor(3);
@@ -272,11 +273,11 @@ public class MainWindow : Window, IDisposable
 
             ImGui.Text("Dealer Section:");
             ImGui.SameLine();
-            
-            string dealerName = string.IsNullOrEmpty(Plugin.Configuration.DealerName) 
-                ? "No dealer selected" 
+
+            string dealerName = string.IsNullOrEmpty(Plugin.Configuration.DealerName)
+                ? "No dealer selected"
                 : Plugin.Configuration.DealerName;
-            
+
             ImGui.Text($"Dealer: {dealerName}");
 
             if (!string.IsNullOrEmpty(Plugin.Configuration.DealerName))
@@ -299,7 +300,8 @@ public class MainWindow : Window, IDisposable
     private void DrawDealerControls()
     {
         var card = new CardManagement();
-        ImGui.Text($"Dealer's Cards: {string.Join(", ", gameState.DealerCards)} Total: {card.GetTotal(gameState.DealerCards)}");
+        string handDescription = card.GetHandDescription(gameState.DealerCards);
+        ImGui.Text($"Dealer's Cards: {handDescription} Total: {card.GetTotal(gameState.DealerCards)}");
 
         if (ImGui.Button("Hit", new Vector2(150, 30)))
         {
@@ -327,11 +329,11 @@ public class MainWindow : Window, IDisposable
             CalculateAndDistributeWinnings();
         }
 
-       
-        
+
+
 
         ImGui.SameLine();
-        if (ImGui.Button("New round", new Vector2(150,30)))
+        if (ImGui.Button("New round", new Vector2(150, 30)))
         {
             Plugin.Chat.SendMessage("/p A new round has started: Goodluck!");
             Plugin.Chat.SendMessage($"/p ----------------------------------------");
@@ -357,7 +359,7 @@ public class MainWindow : Window, IDisposable
 
             if (ImGui.Button("Hit", new Vector2(80, 30)) && !playerState.IsStanding && !playerState.HasDoubledDown && !playerState.HasUsedFirstHit)
             {
-                List<int> currentHand = playerState.IsPlayingSecondHand ? 
+                List<int> currentHand = playerState.IsPlayingSecondHand ?
                     playerState.SecondHand : playerState.CardValues;
 
                 int diceResult = card.GetDiceResult();
@@ -365,10 +367,10 @@ public class MainWindow : Window, IDisposable
 
                 if (!string.IsNullOrEmpty(Plugin.Configuration.ValueHit))
                     Plugin.Chat.SendMessage($"/p {Plugin.Configuration.ValueHit}");
-                     Plugin.Chat.SendMessage($"/p ----------------------------------------");
+                Plugin.Chat.SendMessage($"/p ----------------------------------------");
                 if (!string.IsNullOrEmpty(Plugin.Configuration.HitText))
                     Plugin.Chat.SendMessage($"/p {Plugin.Configuration.HitText}");
-                     Plugin.Chat.SendMessage($"/p ----------------------------------------");
+                Plugin.Chat.SendMessage($"/p ----------------------------------------");
 
                 currentHand.Add(diceResult);
                 currentHand.Add(diceResult2);
@@ -393,16 +395,16 @@ public class MainWindow : Window, IDisposable
                     Plugin.Chat.SendMessage($"/p ----------------------------------------");
                     if (!string.IsNullOrEmpty(Plugin.Configuration.BustEmote))
                         Plugin.Chat.SendMessage($"/p {Plugin.Configuration.BustEmote}");
-                         Plugin.Chat.SendMessage($"/p ----------------------------------------");
+                    Plugin.Chat.SendMessage($"/p ----------------------------------------");
                     playerState.IsStanding = true;
                 }
                 else if (card.GetTotal(currentHand) == 21)
                 {
                     Plugin.Chat.SendMessage($"/p {playerName} got a Natural 21!");
-                     Plugin.Chat.SendMessage($"/p ----------------------------------------");
+                    Plugin.Chat.SendMessage($"/p ----------------------------------------");
                     if (!string.IsNullOrEmpty(Plugin.Configuration.Natural21Emote))
                         Plugin.Chat.SendMessage($"/p {Plugin.Configuration.Natural21Emote}");
-                         Plugin.Chat.SendMessage($"/p ----------------------------------------");
+                    Plugin.Chat.SendMessage($"/p ----------------------------------------");
                     playerState.IsStanding = true;
                 }
             }
@@ -436,10 +438,10 @@ public class MainWindow : Window, IDisposable
             {
                 int diceResult = card.GetDiceResult();
                 playerState.CardValues.Add(diceResult);
-                
+
                 Plugin.Chat.SendMessage($"/p Random! (1-13) {diceResult}");
                 Plugin.Chat.SendMessage($"/p {playerName}'s Total: {card.GetTotal(playerState.CardValues)}");
-                 Plugin.Chat.SendMessage($"/p ----------------------------------------");
+                Plugin.Chat.SendMessage($"/p ----------------------------------------");
 
                 if (card.GetTotal(playerState.CardValues) > 21)
                 {
@@ -447,7 +449,7 @@ public class MainWindow : Window, IDisposable
                     Plugin.Chat.SendMessage($"/p ----------------------------------------");
                     if (!string.IsNullOrEmpty(Plugin.Configuration.BustEmote))
                         Plugin.Chat.SendMessage($"/p {Plugin.Configuration.BustEmote}");
-                        Plugin.Chat.SendMessage($"/p ----------------------------------------");
+                    Plugin.Chat.SendMessage($"/p ----------------------------------------");
                     playerState.IsStanding = true;
                 }
             }
@@ -485,7 +487,7 @@ public class MainWindow : Window, IDisposable
                 Plugin.Chat.SendMessage($"/p ----------------------------------------");
                 if (!string.IsNullOrEmpty(Plugin.Configuration.StandValue))
                     Plugin.Chat.SendMessage($"/p {Plugin.Configuration.StandValue}");
-                    Plugin.Chat.SendMessage($"/p ----------------------------------------");
+                Plugin.Chat.SendMessage($"/p ----------------------------------------");
             }
 
             ImGui.PopStyleColor(3);
@@ -520,7 +522,7 @@ public class MainWindow : Window, IDisposable
                 Plugin.Chat.SendMessage($"/p ----------------------------------------");
                 if (!string.IsNullOrEmpty(Plugin.Configuration.DoubleDownValue))
                     Plugin.Chat.SendMessage($"/p {Plugin.Configuration.DoubleDownValue}");
-                    Plugin.Chat.SendMessage($"/p ----------------------------------------");
+                Plugin.Chat.SendMessage($"/p ----------------------------------------");
 
                 int diceResult = card.GetDiceResult();
                 playerState.CardValues.Add(diceResult);
@@ -539,7 +541,7 @@ public class MainWindow : Window, IDisposable
                     Plugin.Chat.SendMessage($"/p ----------------------------------------");
                     if (!string.IsNullOrEmpty(Plugin.Configuration.BustEmote))
                         Plugin.Chat.SendMessage($"/p {Plugin.Configuration.BustEmote}");
-                        Plugin.Chat.SendMessage($"/p ----------------------------------------");
+                    Plugin.Chat.SendMessage($"/p ----------------------------------------");
                 }
             }
 
@@ -577,7 +579,7 @@ public class MainWindow : Window, IDisposable
 
                 playerState.CardValues.Clear();
                 playerState.CardValues.Add(firstCard);
-                
+
                 playerState.SecondHand.Clear();
                 playerState.SecondHand.Add(secondCard);
 
@@ -589,7 +591,7 @@ public class MainWindow : Window, IDisposable
                 Plugin.Chat.SendMessage($"/p {playerName} split their pair! New bet per hand: {FormatWinnings(playerState.Bet / 2)}");
                 Plugin.Chat.SendMessage($"/p Playing first hand...");
                 Plugin.Chat.SendMessage($"/p ----------------------------------------");
-                
+
                 playerState.CanSplit = false;
             }
 
@@ -614,7 +616,7 @@ public class MainWindow : Window, IDisposable
                 if (member.Name.TextValue != Plugin.Configuration.DealerName)
                 {
                     string playerName = member.Name.TextValue;
-                    
+
                     // Check if player has cards and bets before calculating
                     if (gameState.Players.ContainsKey(playerName) && gameState.Players[playerName].Bet > 0)
                     {
@@ -672,13 +674,13 @@ public class MainWindow : Window, IDisposable
 
                 //winnerDisplay.ShowWinner(roundWinner);
                 Plugin.Chat.SendMessage($"{roundWinner} won the round!");
-               
+
             }
             else
             {
                 Plugin.Chat.SendMessage($"The dealer won the round");
-            } 
-                
+            }
+
 
         }
         catch (Exception ex)
@@ -708,10 +710,10 @@ public class MainWindow : Window, IDisposable
                 player.IsInitialized = true;
                 player.HasValidBet = false;
             }
-            
+
             // Clear dealer's cards
             gameState.DealerCards.Clear();
-            
+
             Plugin.Chat.SendMessage("/p Cleared all player and dealer data for the next round.");
             Plugin.Chat.SendMessage($"/p ----------------------------------------");
         }

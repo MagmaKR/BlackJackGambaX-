@@ -20,4 +20,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Downloads\ECommons-master\ECommons-master\ECommons\ECommons.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="DotNet.ReproducibleBuilds" Version="1.2.25" />
+  </ItemGroup>
 </Project>
