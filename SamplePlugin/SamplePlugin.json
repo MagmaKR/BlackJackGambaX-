@@ -4,7 +4,7 @@
   "Name": "Gamba BlackJack X",
   "InternalName": "SamplePlugin",
   "AssemblyVersion": "0.0.0.1",
-  "Description": "A blackjack managmer that is user friendly disabling the need for macros and calculatings",
+  "Description": "A blackjack manager that is user friendly disabling the need for macros and calculations",
   "ApplicableVersion": "any",
   "Tags": [
     "Blackjack",
