@@ -19,6 +19,7 @@ public class MainWindow : Window, IDisposable
     public GameState gameState;
     private WinnerDisplay winnerDisplay;
     private CardManagement cardManager;
+    public string playerName { get; set; }
 
     public MainWindow(Plugin plugin)
         : base("BlackJack Gamba Manager##With a hidden ID", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
@@ -105,7 +106,7 @@ public class MainWindow : Window, IDisposable
             if (member?.Name?.TextValue == null || member.Name.TextValue == Plugin.Configuration.DealerName)
                 continue;
 
-            string playerName = member.Name.TextValue;
+            playerName = member.Name.TextValue;
 
             try
             {
@@ -232,9 +233,7 @@ public class MainWindow : Window, IDisposable
         {
             Plugin.Chat.SendMessage($"/p {playerName} bet amount is {formatBet}");
             Plugin.Chat.SendMessage($"/p --------------------------------------");
-            if (!string.IsNullOrEmpty(Plugin.Configuration.BetEmote))
-                Plugin.Chat.SendMessage($"/p {Plugin.Configuration.BetEmote}");
-
+           
 
         }
 
@@ -365,12 +364,7 @@ public class MainWindow : Window, IDisposable
                 int diceResult = card.GetDiceResult();
                 int diceResult2 = card.GetDiceResult();
 
-                if (!string.IsNullOrEmpty(Plugin.Configuration.ValueHit))
-                    Plugin.Chat.SendMessage($"/p {Plugin.Configuration.ValueHit}");
-                Plugin.Chat.SendMessage($"/p ----------------------------------------");
-                if (!string.IsNullOrEmpty(Plugin.Configuration.HitText))
-                    Plugin.Chat.SendMessage($"/p {Plugin.Configuration.HitText}");
-                Plugin.Chat.SendMessage($"/p ----------------------------------------");
+               
 
                 currentHand.Add(diceResult);
                 currentHand.Add(diceResult2);
@@ -393,18 +387,14 @@ public class MainWindow : Window, IDisposable
                 {
                     Plugin.Chat.SendMessage($"/p {playerName}'s hand busted with {card.GetTotal(currentHand)}");
                     Plugin.Chat.SendMessage($"/p ----------------------------------------");
-                    if (!string.IsNullOrEmpty(Plugin.Configuration.BustEmote))
-                        Plugin.Chat.SendMessage($"/p {Plugin.Configuration.BustEmote}");
-                    Plugin.Chat.SendMessage($"/p ----------------------------------------");
+                   
                     playerState.IsStanding = true;
                 }
                 else if (card.GetTotal(currentHand) == 21)
                 {
                     Plugin.Chat.SendMessage($"/p {playerName} got a Natural 21!");
                     Plugin.Chat.SendMessage($"/p ----------------------------------------");
-                    if (!string.IsNullOrEmpty(Plugin.Configuration.Natural21Emote))
-                        Plugin.Chat.SendMessage($"/p {Plugin.Configuration.Natural21Emote}");
-                    Plugin.Chat.SendMessage($"/p ----------------------------------------");
+                   
                     playerState.IsStanding = true;
                 }
             }
@@ -447,9 +437,7 @@ public class MainWindow : Window, IDisposable
                 {
                     Plugin.Chat.SendMessage($"/p {playerName} has busted: Total is {card.GetTotal(playerState.CardValues)}");
                     Plugin.Chat.SendMessage($"/p ----------------------------------------");
-                    if (!string.IsNullOrEmpty(Plugin.Configuration.BustEmote))
-                        Plugin.Chat.SendMessage($"/p {Plugin.Configuration.BustEmote}");
-                    Plugin.Chat.SendMessage($"/p ----------------------------------------");
+                    
                     playerState.IsStanding = true;
                 }
             }
@@ -485,9 +473,7 @@ public class MainWindow : Window, IDisposable
                 playerState.HitButton2Enabled = false;
                 Plugin.Chat.SendMessage($"/p Player {playerName} is standing for this round");
                 Plugin.Chat.SendMessage($"/p ----------------------------------------");
-                if (!string.IsNullOrEmpty(Plugin.Configuration.StandValue))
-                    Plugin.Chat.SendMessage($"/p {Plugin.Configuration.StandValue}");
-                Plugin.Chat.SendMessage($"/p ----------------------------------------");
+
             }
 
             ImGui.PopStyleColor(3);
@@ -496,6 +482,34 @@ public class MainWindow : Window, IDisposable
         {
             Svc.Log.Error($"Error in DrawStandButton for {playerName}: {ex.Message}");
         }
+    }
+
+    private void DrawDoubleDownMessageButton(string playerName, PlayerState playerState, CardManagement card, Vector4 defaultButtonColor)
+    {
+
+        
+        if (playerState.IsStanding || !playerState.CanDoubleDown)
+        {
+            ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0.5f, 0.5f, 0.5f, 1.0f));
+            ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(0.5f, 0.5f, 0.5f, 1.0f));
+            ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0.5f, 0.5f, 0.5f, 1.0f));
+        }
+        else
+        {
+            ImGui.PushStyleColor(ImGuiCol.Button, defaultButtonColor);
+            ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(0.4f, 0.6f, 1.0f, 1.0f));
+            ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0.2f, 0.4f, 0.8f, 1.0f));
+        }
+
+        if (ImGui.Button("DD CM" , new Vector2 (60,30)) && playerState.CanDoubleDown && !playerState.IsStanding)
+        {
+            playerState.Bet *= 2;
+            Plugin.Chat.SendMessage($"/p {playerName} doubled down! New bet: {FormatWinnings(playerState.Bet)}");
+            Plugin.Chat.SendMessage($"/p ----------------------------------------");
+
+        }
+
+        ImGui.PopStyleColor(3);
     }
 
     private void DrawDoubleDownButton(string playerName, PlayerState playerState, CardManagement card, Vector4 defaultButtonColor)
@@ -518,11 +532,7 @@ public class MainWindow : Window, IDisposable
             if (ImGui.Button("DD", new Vector2(60, 30)) && playerState.CanDoubleDown && !playerState.IsStanding)
             {
                 playerState.Bet *= 2;
-                Plugin.Chat.SendMessage($"/p {playerName} doubled down! New bet: {FormatWinnings(playerState.Bet)}");
-                Plugin.Chat.SendMessage($"/p ----------------------------------------");
-                if (!string.IsNullOrEmpty(Plugin.Configuration.DoubleDownValue))
-                    Plugin.Chat.SendMessage($"/p {Plugin.Configuration.DoubleDownValue}");
-                Plugin.Chat.SendMessage($"/p ----------------------------------------");
+               
 
                 int diceResult = card.GetDiceResult();
                 playerState.CardValues.Add(diceResult);
@@ -539,9 +549,7 @@ public class MainWindow : Window, IDisposable
                 {
                     Plugin.Chat.SendMessage($"/p {playerName} has busted: Total is {card.GetTotal(playerState.CardValues)}");
                     Plugin.Chat.SendMessage($"/p ----------------------------------------");
-                    if (!string.IsNullOrEmpty(Plugin.Configuration.BustEmote))
-                        Plugin.Chat.SendMessage($"/p {Plugin.Configuration.BustEmote}");
-                    Plugin.Chat.SendMessage($"/p ----------------------------------------");
+                   
                 }
             }
 
@@ -633,8 +641,7 @@ public class MainWindow : Window, IDisposable
                             winnings = playerBet * 2.5;
                             netChange = winnings - playerBet; // Player gets original bet plus 1.5x
                             Plugin.Chat.SendMessage($"/p {playerName} won {FormatWinnings(netChange)} on a natural blackJack!");
-                            if (!string.IsNullOrEmpty(Plugin.Configuration.Natural21Emote))
-                                Plugin.Chat.SendMessage($"/p {Plugin.Configuration.Natural21Emote}");
+                           
                         }
                         else if (playerTotal <= 21 && (playerTotal > dealerTotal || dealerTotal > 21))
                         {
